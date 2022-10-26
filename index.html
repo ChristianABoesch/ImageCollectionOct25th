@@ -1,0 +1,243 @@
+<!doctype html>
+<html>
+<head>
+  <style>
+    body{
+      margin:0;
+    }
+    #container{
+      width: 100vw;
+      height: 100vh;
+    }
+    .slide{
+      width: 100%;
+      height: 75%;
+      background-repeat: no-repeat;
+      background-position: 50% 50%;
+      display: block;
+      position:absolute;
+      transition: 2s;
+    }
+    #prev{
+      position: absolute;
+      bottom: -125px;
+      left: 10px;
+    }
+    #next{
+      position: absolute;
+      bottom: -125px;
+      right: 10px;
+    }
+    #numContainer{
+      position: absolute;
+      width: 60%;
+      left: 20%;
+      text-align:center;
+      bottom: -125px;
+    }
+    .active{
+      background:gold;
+    }
+    .playButton {
+      background-color: #dadada;
+      color: #000000;
+      padding: 10px;
+      border-radius: 10px;
+      -moz-border-radius: 10px;
+      -webkit-border-radius: 10px;
+      margin:10px
+    }
+    .stopButton {
+      background-color: #545454;
+      color: #ffffff;
+      padding: 10px;
+      border-radius: 10px;
+      -moz-border-radius: 10px;
+      -webkit-border-radius: 10px;
+      margin:10px
+    }
+    .medium-btn {
+      width: 70px;
+      height: 30px;
+    }
+    .block {
+      display: block;
+      width: 100%;
+      border: none;
+      background-color: #600000;
+      color: #ffffff;
+      padding: 14px 28px;
+      font-size: 16px;
+      cursor: pointer;
+      text-align: center;
+    }
+    .accordion {
+    	background-color: #600000;
+    	color: #ffffff;
+    	cursor: pointer;
+    	padding: 18px;
+    	width: 100%;
+    	border: none;
+    	text-align: center;
+    	outline: none;
+    	font-size: 15px;
+    	transition: 0.4s;
+	  }
+
+	  .active, .accordion:hover {
+	    background-color: #603c3c;
+	  }
+
+	  .panel {
+ 	    padding: 0 18px;
+	    background-color: #00ff73;
+      color: #000000;
+      text-align: center;
+	    max-height: 0;
+	    overflow: hidden;
+	    transition: max-height 0.2s ease-out;
+	  }
+  </style>
+  <script>
+    var allImages = [];
+    var allPrompts = [];
+    var currentSlide = 0; 
+
+    function start(){
+      
+      allImages = ['images/i-wonder-what-would-happen-if-i-just-wrote-words-here-170108259.png',
+          'images/i-wonder-what-would-happen-if-i-just-wrote-words-here-null.png',
+          'images/i-wonder-what-would-happen-if-i-just-wrote-words-here-null-alt-1.png',
+          'images/i-wonder-what-would-happen-if-i-just-wrote-words-here-null-alt-2.png',
+          'images/i-wonder-what-would-happen-if-i-just-wrote-words-here-null-alt-3.png']
+      
+      allPrompts = ['Words',
+          'Words, words',
+          'Words, words, words',
+          'Words, words, words, words',
+          'Words, words, words, words, words']
+      
+      var markup = "";
+      for(var i = 0; i < allImages.length; i++){
+        markup += "<div class='slide' style='background-image:url(" + allImages[i] + ")'></div>"
+      }
+      document.getElementById("container").innerHTML = markup;
+
+      markup = "";
+      for(var i = 0; i < allImages.length; i++){
+        markup += "<button onclick='numClicked(" + i + ")' class='num'>" + (i + 1) + "</button>"
+      }
+      document.getElementById("numContainer").innerHTML = markup;
+
+      goToCurrentSlide();
+    }
+
+    var goPrev = function(){
+      currentSlide = currentSlide - 1
+      if(currentSlide < 0){
+        currentSlide = allImages.length;
+      }
+      goToCurrentSlide();
+    }
+
+    var goNext = function(){
+      currentSlide = currentSlide + 1;
+      if(currentSlide >= allImages.length){
+        currentSlide = 0;
+      }
+      goToCurrentSlide();
+    }
+
+    var numClicked = function(n){
+      currentSlide = n;
+      goToCurrentSlide(); 
+    }
+
+    var goToCurrentSlide = function(){
+      var allImgObjs = document.getElementsByClassName("slide")
+      var allNumObjs = document.getElementsByClassName("num")
+      var allPromptObjs = document.getElementsByClassName("prompt")
+      
+      // Update the prompt
+      var markup = "<h3>" + allPrompts[currentSlide] + "</h3>"
+      document.getElementById("promptContainer").innerHTML = markup;
+
+      for(var i = 0; i < allImgObjs.length; i++){
+        if(i==currentSlide){
+          allImgObjs[i].style.opacity = "1";
+          allNumObjs[i].className = "num active"; 
+        }
+        else{
+          allImgObjs[i].style.opacity = "0";
+          allNumObjs[i].className = "num"; 
+        }
+      }
+    }
+
+    function playOne() {
+      audio = new Audio('music/Option D.mp3');
+      audio.play();
+      intervalId = window.setInterval(function(){
+        goNext();
+      }, 2000);
+    }
+
+    function playTwo() {
+      audio = new Audio('music/Beam Me Up.mp3');
+      audio.play();
+      intervalId = window.setInterval(function(){
+        goNext();
+      }, 2000);
+    }
+
+    function stop() {
+      clearInterval(intervalId);
+      audio.pause();
+    }
+
+  </script>
+</head>
+
+<body onload='start()'>
+  <p>Songs: "Option D" and "Beam Me Up" by 1beatproductions</p>
+
+  <div id='promptContainer'>
+    <h1 class='prompt'></h1>
+  </div>
+
+  <button onclick="playOne()" class="block">Song 1</button>
+  <button onclick="playTwo()" class="block">Song 2</button>
+  <button onclick="stop()" class="block">Stop music</button>
+  <button class="accordion">Did you know?</button>
+  <div class="panel">
+    <ul><strong>The first human in history to ever say a word was probably a bit shocked afterwards</strong></ul>
+  </div>
+
+  <div id='container'>
+  </div>
+  <div id='numContainer'>
+  </div>
+  
+  <button onclick='goPrev()' id='prev'> Prev </button>
+  <button onclick='goNext()' id='next'> Next </button>
+
+  <script>
+    var acc = document.getElementsByClassName("accordion");
+    var i;
+    
+    for (i = 0; i < acc.length; i++) {
+      acc[i].addEventListener("click", function() {
+        this.classList.toggle("active");
+        var panel = this.nextElementSibling;
+        if (panel.style.maxHeight) {
+          panel.style.maxHeight = null;
+        } else {
+          panel.style.maxHeight = panel.scrollHeight + "px";
+        } 
+      });
+    }
+  </script>
+
+</body>
+
+</html>
